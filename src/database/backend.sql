@@ -59,4 +59,4 @@ VALUES ('1', '1', 9.99, DATETIME('now'), 0),
 INSERT INTO purchases_products (purchase_id, product_id, quantity)
 VALUES (1,1,2), (2,2,1);
 
-SELECT * FROM purchases_products
+SELECT * FROM purchases

@@ -41,30 +41,27 @@ app.get("/users", async (req: Request, res: Response) => {
     }
   });
 
-
-  
-
   
 //created user
- 
-app.post('/purchases', async (req, res) => {
+app.post('/users', async (req, res) => {
     try {
-      const { buyer, total_price } = req.body;
-      const id = uuidv4();
-      await db('purchases').insert({
+      const { id, name, email, password } = req.body;
+      await db('users').insert({
         id,
-        buyer,
-        total_price,
-        paid: 0
+        name,
+        email,
+        password,
+        created_at: new Date().toISOString()
       });
 
-      const newPurchase = await db('purchases').where({ id }).first();
-      res.status(201).send(newPurchase);
+      const newUser = await db('users').where({ id }).first();
+      res.status(201).send(newUser);
     } catch (error) {
       console.error(error);
-      res.status(500).send('Erro ao criar nova compra');
+      res.status(500).send('Erro ao criar novo usuário');
     }
   });
+
 
 //delete user 
       app.delete("/users/:id", async (req: Request, res: Response) => {
@@ -87,7 +84,7 @@ app.post('/purchases', async (req, res) => {
 
 //PRODUCTS
 
-
+//create
 app.post('/products', async (req, res) => {
     try {
       const { id, name, price, description, image_url } = req.body;
@@ -161,13 +158,16 @@ body example
 
 
 
+
+
+
 //PURCHASE
 
 //create purchase 
 
 app.post('/purchases', async (req, res) => {
     try {
-      const { buyer, total_price } = req.body;
+      const { buyer, total_price, paid } = req.body;
   
       const id = uuidv4();
   
@@ -177,34 +177,16 @@ app.post('/purchases', async (req, res) => {
         total_price,
         paid: 0
       });
-  
-      // Retornar a nova compra como resposta
+
       const newPurchase = await db('purchases').where({ id }).first();
       res.status(201).send(newPurchase);
     } catch (error) {
-      // Lidar com erros
+
       console.error(error);
       res.status(500).send('Erro ao criar nova compra');
     }
   });
 
-
-
-/*
-body example
-{
-  "buyer": "user-id-here",
-  "products": [
-    {
-      "productId": "product-id-here",
-      "quantity": 2
-    },
-    {
-      "productId": "another-product-id-here",
-      "quantity": 1
-    }
-  ]
-}*/
 
 
 
@@ -213,22 +195,31 @@ body example
 app.delete('/purchases/:id', async (req, res) => {
     try {
       const { id } = req.params;
-  
-      // Verificar se a compra existe
       const purchase = await db('purchases').where({ id }).first();
       if (!purchase) {
         return res.status(404).send('Compra não encontrada');
       }
   
-      // Excluir a compra do banco de dados
       await db('purchases').where({ id }).delete();
   
-      // Retornar uma mensagem de sucesso
       res.status(200).send('Compra excluída com sucesso');
     } catch (error) {
-      // Lidar com erros
       console.error(error);
       res.status(500).send('Erro ao excluir compra');
+    }
+  });
+
+
+  
+//Get all purchases
+
+app.get('/purchases' ,async (req, res) => {
+    try {
+      const purchases = await db('purchases')
+      res.status(200).send(purchases);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Erro ao obter informações das compras');
     }
   });
 
